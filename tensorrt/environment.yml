@@ -1,0 +1,13 @@
+name: trt
+
+dependencies:
+- python=3.6
+- pip
+- pip:
+    - "--extra-index-url https://pypi.ngc.nvidia.com"
+    - nvidia-pyindex  # redundant with the above?
+    - tensorflow==2.5.0
+    - nvidia-tensorrt==7.2.3.4
+    - jupyterlab
+    - pandas
+    - seaborn
