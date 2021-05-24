@@ -8,6 +8,7 @@ dependencies:
     - nvidia-pyindex  # redundant with the above?
     - tensorflow==2.5.0
     - nvidia-tensorrt==7.2.3.4
+    - opencv-python
     - jupyterlab
     - pandas
     - seaborn

@@ -1,3 +1,10 @@
+# Quick reference
+
+- **(Re)build container:** `make build`
+- **Jupyter Lab:** `make jlab`
+- **Bash:** `make bash`
+
+
 # Setting up the TensorRT container (`trt`)
 
 Clone the repo:
@@ -10,6 +17,10 @@ cd gpuhackathon-sleap/tensorrt
 - [Install docker](installing_docker.md) if you haven't yet.
 
 To build the container just run:
+```
+make build
+```
+Which runs:
 ```
 docker build -t trt .
 ```
@@ -26,6 +37,11 @@ What this does is:
 
 To just drop into a bash terminal run:
 ```
+make bash
+```
+
+This runs:
+```
 docker run --gpus all -it -w /mnt -v $PWD:/mnt trt:latest bash
 ```
 And activate installed environment:
@@ -36,6 +52,11 @@ And activate installed environment:
 ```
 
 To start a jupyter lab session and run the notebooks:
+```
+make jlab
+```
+
+This runs:
 ```
 docker run --gpus all -it -w /mnt -v $PWD:/mnt -p 8888:8888 trt:latest jlab
 ```
@@ -71,7 +92,7 @@ The working directory for both of these is `/mnt` which will point to the curren
 
 # Running the notebooks
 
-1. Start the container with jupyter lab: `docker run --gpus all -it -w /mnt -v $PWD:/mnt -p 8888:8888 trt:latest jlab`
+1. Start the container with jupyter lab: `make jlab`
 2. `download_data.ipynb`: Downloads data and trained models to `data/`
 3. `convert_models.ipynb`: Converts trained models to [`SavedModel`](https://www.tensorflow.org/guide/saved_model) and [TensorRT optimized engine](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-722/quick-start-guide/index.html#framework-integration) formats.
 4. `benchmark_models.ipynb`: Run basic benchmarking and plot results

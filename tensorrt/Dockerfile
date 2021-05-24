@@ -12,6 +12,10 @@ RUN wget \
     && rm -f Miniconda3-latest-Linux-x86_64.sh 
 RUN conda --version
 
+# Deps for OpenCV (ref: https://stackoverflow.com/a/63377623)
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6  -y
+
 # Create an environment (named "trt")
 COPY environment.yml /tmp
 RUN conda env create -f /tmp/environment.yml
