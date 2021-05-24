@@ -53,7 +53,8 @@ class OptimizedModel():
                 all_preds.append(self.predict(input_data[inds]))
             return all_preds
                 
-        x = tf.constant(input_data.astype('float32'))
+#         x = tf.constant(input_data.astype('float32'))
+        x = tf.constant(input_data)
         labeling = self.loaded_model_fn(x)
         try:
             preds = labeling['predictions'].numpy()
