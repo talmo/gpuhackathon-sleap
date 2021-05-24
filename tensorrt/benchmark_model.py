@@ -9,6 +9,7 @@ logging.getLogger("tensorflow").addHandler(logging.NullHandler(logging.ERROR))
 
 import numpy as np
 import tensorflow as tf
+import cv2
 from time import perf_counter
 from trtutils import OptimizedModel
 import system
@@ -29,6 +30,30 @@ def log_result(data, filename="benchmark.csv"):
             df,
         ])
     df.to_csv(filename, index=False)
+
+
+def read_frames(video_path, fidxs=None, grayscale=True):
+    """Read frames from a video file.
+    
+    Args:
+        video_path: Path to MP4
+        fidxs: List of frame indices or None to read all frames (default: None)
+        grayscale: Keep only one channel of the images (default: True)
+    
+    Returns:
+        Loaded images in array of shape (n_frames, height, width, channels) and dtype uint8.
+    """
+    vr = cv2.VideoCapture(video_path)
+    if fidxs is None:
+        fidxs = np.arange(vr.get(cv2.CAP_PROP_FRAME_COUNT))
+    frames = []
+    for fidx in fidxs:
+        vr.set(cv2.CAP_PROP_POS_FRAMES, fidx)
+        img = vr.read()[1]
+        if grayscale:
+            img = img[:, :, [0]]
+        frames.append(img)
+    return np.stack(frames, axis=0)
 
 
 def benchmark(data, model, **kwargs):
@@ -68,7 +93,7 @@ def benchmark(data, model, **kwargs):
     return latency, fps
 
 
-def benchmark_model_set(model, precision, batch_size, batches, log_filename="benchmark.csv"):
+def benchmark_model_set(model, precision, test_data, batch_size, batches, log_filename="benchmark.csv"):
     """Benchmark a pair of TensorFlow and TensorRT models."""
     saved_model_path = f"data/{model}_savedmodel"  # SavedModel proto folder
     opt_model_path = f"data/{model}_trt_{precision}"
@@ -77,19 +102,28 @@ def benchmark_model_set(model, precision, batch_size, batches, log_filename="ben
     opt_model = OptimizedModel(saved_model_dir=opt_model_path)
 
     N = int(batch_size * batches)
-    img_shape = tuple(tf_model.inputs[0].shape[1:])
-    data = np.zeros((N,) + img_shape, dtype="float32")
+    if "inference_" in model:
+        # Real data
+        data = read_frames(test_data, np.arange(N))
+        img_shape = data.shape[1:]
+    else:
+        # Dummy data
+        test_data = "zeros"
+        img_shape = tuple(tf_model.inputs[0].shape[1:])
+        data = np.zeros((N,) + img_shape, dtype="float32")
 
     print("==========")
     print(f"Model: {model}")
     print(f"Precision: {precision}")
     print("==========")
     print(f"tf.keras.Model (batch size = {batch_size}):")
+    print("Test inputs:", data.shape, data.dtype)
     tf_latency, tf_fps = benchmark(data, tf_model, batch_size=batch_size)
     print("==========")
     print()
     print("==========")
     print(f"TensorRT optimized model (batch size = {batch_size}):")
+    print("Test inputs:", data.shape, data.dtype)
     trt_latency, trt_fps = benchmark(data, opt_model, batch_size=batch_size)
     
     latency_delta = trt_latency - tf_latency
@@ -105,6 +139,7 @@ def benchmark_model_set(model, precision, batch_size, batches, log_filename="ben
     log_result({
         "model": model,
         "precision": precision,
+        "test_data": test_data,
         "batch_size": batch_size,
         "engine_base": "tf",
         "engine": "tf",
@@ -121,6 +156,7 @@ def benchmark_model_set(model, precision, batch_size, batches, log_filename="ben
     log_result({
         "model": model,
         "precision": precision,
+        "test_data": test_data,
         "batch_size": batch_size,
         "engine_base": "trt",
         "engine": f"trt_{precision.lower()}",
@@ -139,9 +175,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("model", type=str)
     parser.add_argument("precision", type=str)
+    parser.add_argument("test_data", type=str)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--batches", type=int, default=4)
     parser.add_argument("--log", type=str, default="benchmark.csv")
     args = parser.parse_args()
 
-    benchmark_model_set(args.model, args.precision, args.batch_size, args.batches, log_filename=args.log)
+    benchmark_model_set(args.model, args.precision, args.test_data, args.batch_size, args.batches, log_filename=args.log)
