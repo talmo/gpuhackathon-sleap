@@ -1,0 +1,16 @@
+  platform: "tensorflow_savedmodel"
+  max_batch_size: 32
+  input [
+    {
+      name: "input"
+      data_type: TYPE_FP32
+      dims: [512,512,1 ]
+    }
+  ]
+  output [
+    {
+      name: "CentroidConfmapsHead"
+      data_type: TYPE_FP32
+      dims: [256,256,1]
+    }
+  ]

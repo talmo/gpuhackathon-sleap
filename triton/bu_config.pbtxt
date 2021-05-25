@@ -1,0 +1,20 @@
+  platform: "tensorflow_savedmodel"
+  max_batch_size: 32
+  input [
+    {
+      name: "input"
+      data_type: TYPE_FP32
+      dims: [1024,1024,1 ]
+    }
+  ]
+  output [
+    {
+      name: "MultiInstanceConfmapsHead_0"
+      data_type: TYPE_FP32
+      dims: [256,256,13]
+    },{
+      name: "PartAffinityFieldsHead_0"
+      data_type: TYPE_FP32
+      dims: [128,128,24]
+    }
+  ]
