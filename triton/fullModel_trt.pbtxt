@@ -1,0 +1,27 @@
+
+platform: "tensorflow_savedmodel"
+max_batch_size: 8
+input [
+    {
+      name: "input_1"
+      data_type: TYPE_UINT8
+      dims: [1024,1024,1]
+    }
+    ]
+    output [
+     {
+      name: "instance_peaks"
+      data_type: TYPE_FP32
+      dims: [2,13,2]
+    },
+    {
+      name: "instance_peak_vals"
+      data_type: TYPE_FP32
+      dims: [-1]
+    },
+    {
+      name: "class_probabilities"
+      data_type: TYPE_FP32
+      dims: [-1]
+    }
+]
