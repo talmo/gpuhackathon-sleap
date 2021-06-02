@@ -1,0 +1,17 @@
+  platform: "tensorflow_savedmodel"
+  max_batch_size: 32
+  input [
+    {
+      name: "input"
+      format: FORMAT_NHWC
+      data_type: TYPE_FP32
+      dims: [160,160,1 ]
+    }
+  ]
+  output [
+    {
+      name: "CenteredInstanceConfmapsHead_0"
+      data_type: TYPE_FP32
+      dims: [80,80,13]
+    }
+  ]
