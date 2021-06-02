@@ -12,3 +12,4 @@ dependencies:
     - jupyterlab
     - pandas
     - seaborn
+    - jedi==0.17
