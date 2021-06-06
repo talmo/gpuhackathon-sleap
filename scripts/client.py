@@ -34,7 +34,7 @@ def read_frames(video_path, fidxs=None, grayscale=True):
 
 if __name__ == '__main__':
 
-    test_data = "../tensorrt/data/190719_090330_wt_18159206_rig1.2@15000-17560.mp4"
+    test_data = "sample.mp4"
     image_data = read_frames(test_data, np.arange(16)).astype('float32')
 
     # Resize depending on the model we're actually going to use -- full for bu, 0.5 scale for centroid
@@ -79,4 +79,4 @@ if __name__ == '__main__':
 
     import matplotlib.pyplot as plt
     plt.imshow(responses[0].as_numpy(output_names[0])[15])
-    plt.show()
+    plt.savefig('figure.png')

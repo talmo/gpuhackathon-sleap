@@ -1,0 +1,10 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/tritonserver:21.03-py3
+
+%post
+    git clone https://github.com/vineetbansal/gpuhackathon-sleap.git
+    cd gpuhackathon-sleap/triton
+
+    mkdir -p model_repository/centroid_savedmodel/1/model.savedmodel/
+    cp -r ../tensorrt/data/centroid_savedmodel/* model_repository/centroid_savedmodel/1/model.savedmodel/
+    cp centroid_config.pbtxt model_repository/centroid_savedmodel/config.pbtxt
