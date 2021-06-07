@@ -1,0 +1,8 @@
+authtoken: AUTH_TOKEN
+tunnels:
+  grpc:
+    addr: 8001
+    proto: tcp
+  prometheus:
+    addr: 9090
+    proto: http
