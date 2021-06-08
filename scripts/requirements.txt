@@ -1,0 +1,6 @@
+AttrDict
+matplotlib
+opencv-python
+pillow
+tensorflow
+tritonclient[all]

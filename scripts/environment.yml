@@ -1,0 +1,10 @@
+name: 'triton-sleap'
+
+channels:
+  - defaults
+
+dependencies:
+  - pip
+  - python=3.8
+  - pip:
+    - -r file:requirements.txt 
